@@ -35,6 +35,23 @@ EventMap EventMap::load(const Blob &rawData) {
         pos += size;
     }
 
+    // TODO(yoctozepto): sanity checks, to be moved into an independent tool
+    for (auto &[eventId, eventSteps] : result._eventsById) {
+        bool brokenEvent = false;
+        // NOTE(yoctozepto): we know some scripts are broken already and have "fixed" them by setting `step = -1` for these types
+        const int offset = (eventSteps[0].type == EVENT_MouseOver || eventSteps[0].type == EVENT_LocationName) ? -1 : 0;
+        for (int i = 0; i < int(eventSteps.size()); i++) {
+            if (eventSteps[i].step != i + offset) {
+                brokenEvent = true;
+                break;
+            }
+        }
+        // TODO(yoctozepto): notably one "broken" in each of: Bracada and The Lincoln
+        if (brokenEvent) {
+            logger->warning("Event {} is broken, may misbehave", eventId);
+        }
+    }
+
     return result;
 }
 

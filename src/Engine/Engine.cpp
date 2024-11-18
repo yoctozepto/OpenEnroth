@@ -1488,6 +1488,13 @@ void loadMapEventsAndStrings(MapId mapid) {
     initLevelStrings(engine->_gameResourceManager->getEventsFile(fmt::format("{}.str", mapNameWithoutExt)));
 
     engine->_localEventMap = EventMap::load(engine->_gameResourceManager->getEventsFile(fmt::format("{}.evt", mapNameWithoutExt)));
+
+    for (int i = int(MAP_FIRST); i <= int(MAP_LAST); i++) {
+        MapId mapid = MapId(i);
+        std::string mapName = pMapStats->pInfos[mapid].fileName;
+        std::string mapNameWithoutExt = mapName.substr(0, mapName.rfind('.'));
+        EventMap::load(engine->_gameResourceManager->getEventsFile(fmt::format("{}.evt", mapNameWithoutExt)));
+    }
 }
 
 bool _44100D_should_alter_right_panel() {
